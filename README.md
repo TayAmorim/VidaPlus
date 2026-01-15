@@ -37,4 +37,4 @@ Pré-requisitos: Node.js instalado.
 
 1. **Clone o repositório:**
    ```bash
-   git clone [https://github.com/SEU-USUARIO/sghss-vidaplus.git](https://github.com/SEU-USUARIO/sghss-vidaplus.git)
+   git clone [[https://github.com/SEU-USUARIO/sghss-vidaplus.git](https://github.com/SEU-USUARIO/sghss-vidaplus.git)](https://github.com/TayAmorim/VidaPlus.git)
