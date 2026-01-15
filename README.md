@@ -1,73 +1,40 @@
-# React + TypeScript + Vite
+# VidaPlus - Sistema de Gestão Hospitalar (SGHSS)
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+![React](https://img.shields.io/badge/react-%2320232a.svg?style=for-the-badge&logo=react&logoColor=%2361DAFB)
+![TypeScript](https://img.shields.io/badge/typescript-%23007ACC.svg?style=for-the-badge&logo=typescript&logoColor=white)
+![TailwindCSS](https://img.shields.io/badge/tailwindcss-%2338B2AC.svg?style=for-the-badge&logo=tailwind-css&logoColor=white)
 
-Currently, two official plugins are available:
+## 🏥 Sobre o Projeto
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+Este projeto foi desenvolvido com o propósito de aplicar, de forma prática, os conceitos e habilidades adquiridas no decorrer do curso de Análise e Desenvolvimento de Sistemas. O estudo de caso baseia-se na instituição **VidaPlus**, responsável pela administração de uma rede complexa de hospitais, clínicas de bairro e equipes de *home care*.
 
-## React Compiler
+O objetivo central é disponibilizar um **Sistema de Gestão Hospitalar e de Serviços de Saúde (SGHSS)** que centralize as operações da instituição, garantindo eficiência, segurança da informação e compliance com a LGPD.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## 🎯 Escopo de Desenvolvimento (MVP)
 
-## Expanding the ESLint configuration
+Embora o sistema SGHSS conceptual abranja múltiplos perfis (Pacientes, Médicos e Admin), **esta implementação foca-se exclusivamente no Módulo Administrativo (Back-office)**.
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+O objetivo desta versão é validar a arquitetura frontend, a gestão de estados e a administração de recursos críticos da instituição.
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+### Funcionalidades Implementadas (Perfil Administrador):
+- [ ] **Gestão de Cadastros:** CRUD (Create, Read, Update, Delete) de Pacientes e Profissionais de Saúde.
+- [ ] **Fluxo de Internações:** Painel de controlo de leitos e status de internação.
+- [ ] **Relatórios Gerenciais:** Dashboard com métricas de atendimentos e ocupação.
+- [ ] **Segurança:** Interface preparada para gestão de permissões (simulação).
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+## 🛠 Tecnologias Utilizadas
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+O projeto foi construído utilizando uma arquitetura moderna baseada em componentes e acessibilidade:
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+- **Core:** React (Vite) + TypeScript
+- **Estilização:** Tailwind CSS
+- **Componentes UI:** Shadcn/ui (Radix UI)
+- **Ícones:** Lucide React
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+## 🚀 Como Executar o Projeto
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+Pré-requisitos: Node.js instalado.
+
+1. **Clone o repositório:**
+   ```bash
+   git clone [[https://github.com/SEU-USUARIO/sghss-vidaplus.git](https://github.com/SEU-USUARIO/sghss-vidaplus.git)](https://github.com/TayAmorim/VidaPlus.git)
