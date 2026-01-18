@@ -23,42 +23,20 @@ import {
     X
 } from "lucide-react"
 import { cn } from "@/lib/utils"
-
-
-const appointments = [
-    {
-        id: 1,
-        time: "09:00",
-        duration: "30min",
-        patientName: "Ana Paula Silva",
-        doctorName: "Dr. Carlos Silva - Cardiologia",
-        description: "Consulta de rotina",
-        status: "agendado"
-    },
-    {
-        id: 2,
-        time: "10:30",
-        duration: "45min",
-        patientName: "Carlos Eduardo Santos",
-        doctorName: "Dra. Maria Santos - Pediatria",
-        description: "Acompanhamento pediátrico",
-        status: "agendado"
-    },
-    {
-        id: 3,
-        time: "14:00",
-        duration: "30min",
-        patientName: "Beatriz Oliveira",
-        doctorName: "Dr. João Costa - Ortopedia",
-        description: "Dor no joelho",
-        status: "pendente"
-    }
-];
+import { useAppointments } from "@/hooks/useAppointments"
 
 export default function AppointmentsPage() {
+    const { appointments, addAppointment } = useAppointments();
     const [statusFilter, setStatusFilter] = useState("todos");
     const [isCreating, setIsCreating] = useState(false);
+
     const [modality, setModality] = useState<"presential" | "telemedicine">("presential");
+    const [specialty, setSpecialty] = useState("");
+    const [doctor, setDoctor] = useState("");
+    const [date, setDate] = useState("");
+    const [time, setTime] = useState("");
+    const [duration, setDuration] = useState("30");
+    const [reason, setReason] = useState("");
 
     const filteredAppointments = appointments.filter(appointment =>
         statusFilter === "todos" || appointment.status === statusFilter
@@ -83,6 +61,30 @@ export default function AppointmentsPage() {
         return null;
     };
 
+    const handleCreateAppointment = () => {
+        if (!date || !time || !startCreate) return;
+
+        addAppointment({
+            date,
+            time,
+            duration: `${duration}min`,
+            patientName: "Você (Logado)",
+            doctorName: doctor === 'any' || !doctor ? `Especialista em ${specialty || 'Clínica Geral'}` : (doctor === 'dr-carlos' ? 'Dr. Carlos Silva' : 'Dra. Maria Santos'),
+            description: reason || "Sem descrição",
+            modality: modality,
+            specialty: specialty || "Clínico Geral"
+        } as any);
+
+        setIsCreating(false);
+        setReason("");
+        setDate("");
+        setTime("");
+    };
+
+    const startCreate = () => {
+        setIsCreating(true);
+    };
+
     return (
         <div className="space-y-6">
             <div>
@@ -99,7 +101,6 @@ export default function AppointmentsPage() {
                             <Input
                                 type="date"
                                 className="w-full"
-                                defaultValue="2024-11-24"
                                 disabled={isCreating}
                             />
                         </div>
@@ -126,7 +127,7 @@ export default function AppointmentsPage() {
                         <div className="w-full md:w-1/3">
                             <Button
                                 className="w-full bg-blue-600 hover:bg-blue-700"
-                                onClick={() => setIsCreating(true)}
+                                onClick={startCreate}
                                 disabled={isCreating}
                             >
                                 <Plus className="mr-2 h-4 w-4" />
@@ -185,7 +186,7 @@ export default function AppointmentsPage() {
 
                         <div className="space-y-2">
                             <label className="text-sm font-medium text-slate-700">Especialidade</label>
-                            <Select>
+                            <Select value={specialty} onValueChange={setSpecialty}>
                                 <SelectTrigger>
                                     <SelectValue placeholder="Selecione a especialidade" />
                                 </SelectTrigger>
@@ -201,7 +202,7 @@ export default function AppointmentsPage() {
 
                         <div className="space-y-2">
                             <label className="text-sm font-medium text-slate-700">Médico (opcional)</label>
-                            <Select>
+                            <Select value={doctor} onValueChange={setDoctor}>
                                 <SelectTrigger>
                                     <SelectValue placeholder="Qualquer médico disponível" />
                                 </SelectTrigger>
@@ -217,18 +218,18 @@ export default function AppointmentsPage() {
                         <div className="grid grid-cols-2 gap-4">
                             <div className="space-y-2">
                                 <label className="text-sm font-medium text-slate-700">Data</label>
-                                <Input type="date" />
+                                <Input type="date" value={date} onChange={(e) => setDate(e.target.value)} />
                             </div>
                             <div className="space-y-2">
                                 <label className="text-sm font-medium text-slate-700">Horário</label>
-                                <Input type="time" />
+                                <Input type="time" value={time} onChange={(e) => setTime(e.target.value)} />
                             </div>
                         </div>
 
 
                         <div className="space-y-2">
                             <label className="text-sm font-medium text-slate-700">Duração</label>
-                            <Select defaultValue="30">
+                            <Select value={duration} onValueChange={setDuration}>
                                 <SelectTrigger>
                                     <SelectValue placeholder="Selecione a duração" />
                                 </SelectTrigger>
@@ -244,13 +245,18 @@ export default function AppointmentsPage() {
 
                         <div className="space-y-2">
                             <label className="text-sm font-medium text-slate-700">Motivo da Consulta</label>
-                            <Textarea placeholder="Descreva o motivo da consulta..." className="h-24 resize-none" />
+                            <Textarea
+                                placeholder="Descreva o motivo da consulta..."
+                                className="h-24 resize-none"
+                                value={reason}
+                                onChange={(e) => setReason(e.target.value)}
+                            />
                         </div>
 
 
                         <div className="flex justify-end gap-3 pt-4 border-t">
                             <Button variant="outline" onClick={() => setIsCreating(false)}>Cancelar</Button>
-                            <Button className="bg-blue-600 hover:bg-blue-700">Agendar Consulta</Button>
+                            <Button className="bg-blue-600 hover:bg-blue-700" onClick={handleCreateAppointment}>Agendar Consulta</Button>
                         </div>
                     </CardContent>
                 </Card>
@@ -259,8 +265,8 @@ export default function AppointmentsPage() {
                     <Card className="shadow-sm">
                         <CardContent className="p-6 flex items-center justify-between">
                             <div>
-                                <p className="text-sm text-slate-500 font-medium">Total Hoje</p>
-                                <p className="text-2xl font-bold text-slate-900">3</p>
+                                <p className="text-sm text-slate-500 font-medium">Total</p>
+                                <p className="text-2xl font-bold text-slate-900">{appointments.length}</p>
                             </div>
                             <div className="p-3 bg-blue-50 rounded-lg">
                                 <CalendarIcon className="h-6 w-6 text-blue-600" />
@@ -272,7 +278,7 @@ export default function AppointmentsPage() {
                         <CardContent className="p-6 flex items-center justify-between">
                             <div>
                                 <p className="text-sm text-slate-500 font-medium">Agendados</p>
-                                <p className="text-2xl font-bold text-slate-900">2</p>
+                                <p className="text-2xl font-bold text-slate-900">{appointments.filter(a => a.status === 'agendado').length}</p>
                             </div>
                             <div className="p-3 bg-green-50 rounded-lg">
                                 <CheckCircle2 className="h-6 w-6 text-green-600" />
@@ -284,7 +290,7 @@ export default function AppointmentsPage() {
                         <CardContent className="p-6 flex items-center justify-between">
                             <div>
                                 <p className="text-sm text-slate-500 font-medium">Pendentes</p>
-                                <p className="text-2xl font-bold text-slate-900">1</p>
+                                <p className="text-2xl font-bold text-slate-900">{appointments.filter(a => a.status === 'pendente').length}</p>
                             </div>
                             <div className="p-3 bg-orange-50 rounded-lg">
                                 <AlertCircle className="h-6 w-6 text-orange-600" />
@@ -296,7 +302,7 @@ export default function AppointmentsPage() {
                         <CardContent className="p-6 flex items-center justify-between">
                             <div>
                                 <p className="text-sm text-slate-500 font-medium">Realizados</p>
-                                <p className="text-2xl font-bold text-slate-900">1</p>
+                                <p className="text-2xl font-bold text-slate-900">{appointments.filter(a => a.status === 'realizado').length}</p>
                             </div>
                             <div className="p-3 bg-purple-50 rounded-lg">
                                 <CheckCircle2 className="h-6 w-6 text-purple-600" />
@@ -309,7 +315,7 @@ export default function AppointmentsPage() {
 
             <Card className="shadow-sm">
                 <CardContent className="p-6">
-                    <h3 className="font-semibold text-slate-900 mb-6">Agendamentos para 23 de novembro de 2024</h3>
+                    <h3 className="font-semibold text-slate-900 mb-6">Próximos Agendamentos</h3>
 
                     <div className="space-y-6">
                         {filteredAppointments.length > 0 ? (
@@ -319,6 +325,7 @@ export default function AppointmentsPage() {
                                         <div className="w-16 shrink-0">
                                             <span className="block text-sm font-bold text-slate-900">{appointment.time}</span>
                                             <span className="text-xs text-slate-500">{appointment.duration}</span>
+                                            {appointment.date && <span className="block text-xs text-slate-400 mt-1">{new Date(appointment.date).toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' })}</span>}
                                         </div>
                                         <div className="space-y-1">
                                             <div className="flex items-center gap-2">
@@ -338,7 +345,7 @@ export default function AppointmentsPage() {
                         ) : (
                             <div className="flex flex-col items-center justify-center py-12 text-center text-slate-300">
                                 <CalendarIcon className="h-12 w-12 mb-3 opacity-20" />
-                                <p className="text-slate-500">Nenhum agendamento encontrado para esta data.</p>
+                                <p className="text-slate-500">Nenhum agendamento encontrado.</p>
                             </div>
                         )}
                     </div>
