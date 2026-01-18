@@ -1,11 +1,21 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Calendar, CheckCircle, FileText, Bell, Clock } from "lucide-react"
+import { Calendar, CheckCircle, FileText, Bell, Clock, Video } from "lucide-react"
 import { useAppointments } from "@/hooks/useAppointments"
-import { useMemo } from "react"
+import { useMemo, useState, useEffect } from "react"
 import { cn } from "@/lib/utils"
+import { Button } from "@/components/ui/button"
+import { Link } from "react-router-dom"
 
 export default function PatientDashboard() {
     const { appointments } = useAppointments();
+    const [now, setNow] = useState(new Date());
+
+    useEffect(() => {
+        const timer = setInterval(() => {
+            setNow(new Date());
+        }, 60000);
+        return () => clearInterval(timer);
+    }, []);
 
     const stats = useMemo(() => {
         return {
@@ -17,7 +27,6 @@ export default function PatientDashboard() {
     }, [appointments]);
 
     const nextAppointment = useMemo(() => {
-        const now = new Date();
         const upcoming = appointments
             .filter(a => (a.status === 'agendado' || a.status === 'pendente') && a.date)
             .map(a => ({
@@ -28,7 +37,7 @@ export default function PatientDashboard() {
             .sort((a, b) => a.dateTime.getTime() - b.dateTime.getTime());
 
         return upcoming.length > 0 ? upcoming[0] : null;
-    }, [appointments]);
+    }, [appointments, now]);
 
     const recentAppointments = useMemo(() => {
         return [...appointments]
@@ -60,6 +69,22 @@ export default function PatientDashboard() {
                 return null;
         }
     };
+
+    const getRemainingTimeText = (targetDate: Date) => {
+        const diffMs = targetDate.getTime() - now.getTime();
+        const diffMins = Math.floor(diffMs / 60000);
+        const diffHours = Math.floor(diffMins / 60);
+        const diffDays = Math.floor(diffHours / 24);
+
+        if (diffMins <= 5) return null;
+
+        if (diffDays > 0) return `Falta ${diffDays} dia${diffDays > 1 ? 's' : ''}`;
+        if (diffHours > 0) return `Falta ${diffHours} hora${diffHours > 1 ? 's' : ''}`;
+        return `Falta ${diffMins} min`;
+    };
+
+    const remainingText = nextAppointment ? getRemainingTimeText(nextAppointment.dateTime) : null;
+    const canJoin = nextAppointment && nextAppointment.modality === 'telemedicine' && !remainingText;
 
     return (
         <div className="space-y-6">
@@ -129,7 +154,27 @@ export default function PatientDashboard() {
 
                                 <div className="space-y-1">
                                     <p className="text-blue-100 text-sm">Modalidade</p>
-                                    <p className="font-semibold capitalize">{nextAppointment.modality === 'presential' ? 'Presencial' : 'Telemedicina'}</p>
+                                    <div className="flex bg-blue-950/20 p-2 rounded-lg items-center justify-between">
+                                        <p className="font-semibold capitalize">{nextAppointment.modality === 'presential' ? 'Presencial' : 'Telemedicina'}</p>
+
+                                        {nextAppointment.modality === 'telemedicine' && (
+                                            <>
+                                                {canJoin ? (
+                                                    <Button size="sm" variant="secondary" className="gap-2 text-blue-700 hover:text-blue-800 bg-white hover:bg-blue-50" asChild>
+                                                        <Link to={`/telemedicina/${nextAppointment.id}`}>
+                                                            <Video className="w-4 h-4" />
+                                                            Acessar Sala
+                                                        </Link>
+                                                    </Button>
+                                                ) : (
+                                                    <div className="flex items-center gap-2 text-xs text-blue-200 bg-blue-900/40 px-3 py-1.5 rounded-md border border-blue-500/30">
+                                                        <Clock className="w-3.5 h-3.5" />
+                                                        <span>{remainingText} para entrar</span>
+                                                    </div>
+                                                )}
+                                            </>
+                                        )}
+                                    </div>
                                 </div>
                             </>
                         ) : (

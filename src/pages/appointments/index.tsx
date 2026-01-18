@@ -44,7 +44,6 @@ export default function AppointmentsPage() {
     const [statusFilter, setStatusFilter] = useState("todos");
     const [isCreating, setIsCreating] = useState(false);
 
-    // Form State
     const [editId, setEditId] = useState<string | null>(null);
     const [error, setError] = useState<string | null>(null);
     const [modality, setModality] = useState<"presential" | "telemedicine">("presential");
@@ -98,7 +97,7 @@ export default function AppointmentsPage() {
             time,
             duration: `${duration}min`,
             patientName: "Você (Logado)",
-            doctorName: doctor === 'any' ? `Especialista em ${specialty || 'Clínica Geral'}` : (doctor === 'dr-carlos' ? 'Dr. Carlos Silva' : 'Dra. Maria Santos'),
+            doctorName: doctor === 'any' ? `Especialista em ${specialty || 'Clínica Geral'}` : (doctor === 'dr-carlos' ? 'Dr. Maria Silva' : 'Dra. Maria Santos'),
             description: reason || "Sem descrição",
             modality: modality,
             status: 'agendado' as const
@@ -287,7 +286,7 @@ export default function AppointmentsPage() {
                                 </SelectTrigger>
                                 <SelectContent>
                                     <SelectItem value="any">Qualquer médico disponível</SelectItem>
-                                    <SelectItem value="dr-carlos">Dr. Carlos Silva</SelectItem>
+                                    <SelectItem value="dr-carlos">Dr. Maria Silva</SelectItem>
                                     <SelectItem value="dra-maria">Dra. Maria Santos</SelectItem>
                                 </SelectContent>
                             </Select>

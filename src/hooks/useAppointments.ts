@@ -19,7 +19,7 @@ const MOCK_APPOINTMENTS: Appointment[] = [
         date: "2024-11-23",
         duration: "30min",
         patientName: "Ana Paula Silva",
-        doctorName: "Dr. Carlos Silva - Cardiologia",
+        doctorName: "Dr. Maria Silva - Cardiologia",
         description: "Consulta de rotina",
         status: "agendado",
         modality: "presential"

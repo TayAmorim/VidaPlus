@@ -6,6 +6,7 @@ import AdminDashboard from "./pages/dashboard/admin"
 import ProfessionalDashboard from "./pages/dashboard/professional"
 import PatientDashboard from "./pages/dashboard/patient"
 import AppointmentsPage from "./pages/appointments"
+import TelemedicinePage from "./pages/telemedicine"
 import AppLayout from "@/components/layout/app-layout"
 
 function App() {
@@ -30,6 +31,10 @@ function App() {
 
             <Route element={<ProtectedRoute allowedRoles={['admin', 'professional', 'patient']} />}>
               <Route path="/agendamentos" element={<AppointmentsPage />} />
+            </Route>
+
+            <Route element={<ProtectedRoute allowedRoles={['patient', 'professional']} />}>
+              <Route path="/telemedicina/:id" element={<TelemedicinePage />} />
             </Route>
           </Route>
         </Routes>
