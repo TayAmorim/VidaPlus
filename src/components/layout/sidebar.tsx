@@ -99,9 +99,17 @@ export function Sidebar() {
 
             <div className="border-t p-4">
                 <div className="flex items-center gap-3 mb-4 px-2">
-                    <div className="h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-700 font-semibold text-sm">
-                        {getInitials(user.name)}
-                    </div>
+                    {user.avatar ? (
+                        <img
+                            src={user.avatar}
+                            alt={user.name}
+                            className="h-10 w-10 rounded-full object-cover"
+                        />
+                    ) : (
+                        <div className="h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-700 font-semibold text-sm">
+                            {getInitials(user.name)}
+                        </div>
+                    )}
                     <div className="flex-1 overflow-hidden">
                         <p className="truncate text-sm font-medium text-slate-900">{user.name}</p>
                         <p className="truncate text-xs text-slate-500 capitalize">

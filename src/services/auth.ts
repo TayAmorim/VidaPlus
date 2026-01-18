@@ -1,3 +1,7 @@
+import adminAvatar from '@/assets/admin-user.jpg';
+import doctorAvatar from '@/assets/doctor-user.jpg';
+import patientAvatar from '@/assets/patient-user.jpg';
+
 export type Role = 'admin' | 'professional' | 'patient';
 
 export interface User {
@@ -15,21 +19,21 @@ const MOCK_USERS: User[] = [
         name: 'Administrador Sistema',
         email: 'admin@vidaplus.com',
         role: 'admin',
-        avatar: 'https://github.com/shadcn.png'
+        avatar: adminAvatar
     },
     {
         id: '2',
-        name: 'Dr. João Silva',
+        name: 'Dra Roberta Maia',
         email: 'doc@vidaplus.com',
         role: 'professional',
-        avatar: 'https://github.com/shadcn.png'
+        avatar: doctorAvatar
     },
     {
         id: '3',
         name: 'Maria Oliveira',
         email: 'patient@vidaplus.com',
         role: 'patient',
-        avatar: 'https://github.com/shadcn.png'
+        avatar: patientAvatar
     }
 ];
 
@@ -44,7 +48,7 @@ export async function login(email: string, password: string): Promise<User> {
         return user;
     }
 
-    throw new Error('Credenciais inválidas. Tente admin@vidaplus.com / 123');
+    throw new Error('Credenciais inválidas.');
 }
 
 export async function getUserProfile(): Promise<User | null> {
