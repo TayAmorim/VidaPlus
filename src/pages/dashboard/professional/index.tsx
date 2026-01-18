@@ -28,28 +28,28 @@ const activities = [
         action: "Consulta realizada",
         color: "bg-green-500",
         ring: "ring-green-100",
-        timestamp: new Date(Date.now() - 1000 * 60 * 60 * 2) // 2 hours ago
+        timestamp: new Date(Date.now() - 1000 * 60 * 60 * 2)
     },
     {
         name: "João Santos",
         action: "Exame agendado",
         color: "bg-blue-500",
         ring: "ring-blue-100",
-        timestamp: new Date(Date.now() - 1000 * 60 * 60 * 3) // 3 hours ago
+        timestamp: new Date(Date.now() - 1000 * 60 * 60 * 3)
     },
     {
         name: "Ana Costa",
         action: "Internação",
         color: "bg-orange-500",
         ring: "ring-orange-100",
-        timestamp: new Date(Date.now() - 1000 * 60 * 60 * 5) // 5 hours ago
+        timestamp: new Date(Date.now() - 1000 * 60 * 60 * 5)
     },
     {
         name: "Pedro Oliveira",
         action: "Alta médica",
         color: "bg-green-500",
         ring: "ring-green-100",
-        timestamp: new Date(Date.now() - 1000 * 60 * 60 * 6) // 6 hours ago
+        timestamp: new Date(Date.now() - 1000 * 60 * 60 * 6)
     }
 ];
 

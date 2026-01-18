@@ -24,7 +24,7 @@ import {
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 
-// Mock data definition
+
 const appointments = [
     {
         id: 1,
@@ -90,7 +90,7 @@ export default function AppointmentsPage() {
                 <p className="text-slate-500">Gestão de consultas e procedimentos</p>
             </div>
 
-            {/* Filters */}
+
             <Card>
                 <CardContent className="p-6">
                     <div className="flex flex-col md:flex-row gap-4 items-end">
@@ -137,7 +137,7 @@ export default function AppointmentsPage() {
                 </CardContent>
             </Card>
 
-            {/* Content Switch: Stats vs Form */}
+
             {isCreating ? (
                 <Card className="shadow-lg border-blue-100">
                     <CardHeader className="border-b pb-4">
@@ -149,7 +149,7 @@ export default function AppointmentsPage() {
                         </div>
                     </CardHeader>
                     <CardContent className="p-6 space-y-6">
-                        {/* Modality */}
+
                         <div className="space-y-3">
                             <label className="text-sm font-medium text-slate-700">Modalidade de Atendimento</label>
                             <div className="grid grid-cols-2 gap-4">
@@ -182,7 +182,7 @@ export default function AppointmentsPage() {
                             </div>
                         </div>
 
-                        {/* Specialty */}
+
                         <div className="space-y-2">
                             <label className="text-sm font-medium text-slate-700">Especialidade</label>
                             <Select>
@@ -198,7 +198,7 @@ export default function AppointmentsPage() {
                             </Select>
                         </div>
 
-                        {/* Doctor */}
+
                         <div className="space-y-2">
                             <label className="text-sm font-medium text-slate-700">Médico (opcional)</label>
                             <Select>
@@ -213,7 +213,7 @@ export default function AppointmentsPage() {
                             </Select>
                         </div>
 
-                        {/* Date & Time */}
+
                         <div className="grid grid-cols-2 gap-4">
                             <div className="space-y-2">
                                 <label className="text-sm font-medium text-slate-700">Data</label>
@@ -225,7 +225,7 @@ export default function AppointmentsPage() {
                             </div>
                         </div>
 
-                        {/* Duration */}
+
                         <div className="space-y-2">
                             <label className="text-sm font-medium text-slate-700">Duração</label>
                             <Select defaultValue="30">
@@ -241,13 +241,13 @@ export default function AppointmentsPage() {
                             </Select>
                         </div>
 
-                        {/* Reason */}
+
                         <div className="space-y-2">
                             <label className="text-sm font-medium text-slate-700">Motivo da Consulta</label>
                             <Textarea placeholder="Descreva o motivo da consulta..." className="h-24 resize-none" />
                         </div>
 
-                        {/* Actions */}
+
                         <div className="flex justify-end gap-3 pt-4 border-t">
                             <Button variant="outline" onClick={() => setIsCreating(false)}>Cancelar</Button>
                             <Button className="bg-blue-600 hover:bg-blue-700">Agendar Consulta</Button>
@@ -306,7 +306,7 @@ export default function AppointmentsPage() {
                 </div>
             )}
 
-            {/* List */}
+
             <Card className="shadow-sm">
                 <CardContent className="p-6">
                     <h3 className="font-semibold text-slate-900 mb-6">Agendamentos para 23 de novembro de 2024</h3>

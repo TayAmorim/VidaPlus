@@ -85,7 +85,7 @@ export default function AdminDashboard() {
             </div>
 
             <div className="grid gap-6 md:grid-cols-2">
-                {/* Alertas e Notificações */}
+
                 <Card className="shadow-sm">
                     <CardHeader>
                         <CardTitle className="flex items-center gap-2 text-base font-semibold text-slate-900">
@@ -134,7 +134,7 @@ export default function AdminDashboard() {
                     </CardContent>
                 </Card>
 
-                {/* Status dos Departamentos */}
+
                 <Card className="shadow-sm">
                     <CardHeader>
                         <CardTitle className="flex items-center gap-2 text-base font-semibold text-slate-900">
@@ -187,7 +187,7 @@ export default function AdminDashboard() {
             </div>
 
             <div className="grid gap-6 md:grid-cols-2">
-                {/* Resumo Financeiro */}
+
                 <Card className="shadow-sm">
                     <CardHeader>
                         <CardTitle className="flex items-center gap-2 text-base font-semibold text-slate-900">
@@ -230,7 +230,7 @@ export default function AdminDashboard() {
                     </CardContent>
                 </Card>
 
-                {/* Atividades do Sistema */}
+
                 <Card className="shadow-sm">
                     <CardHeader>
                         <CardTitle className="flex items-center justify-between text-base font-semibold text-slate-900">

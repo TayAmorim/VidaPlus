@@ -31,7 +31,7 @@ const MOCK_USERS: User[] = [
     {
         id: '3',
         name: 'Maria Oliveira',
-        email: 'patient@vidaplus.com',
+        email: 'maria@vidaplus.com',
         role: 'patient',
         avatar: patientAvatar
     }

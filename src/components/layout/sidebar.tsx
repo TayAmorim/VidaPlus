@@ -12,7 +12,7 @@ import {
     Hospital
 } from 'lucide-react';
 
-export function Sidebar() {
+export function SidebarContent() {
     const { user, signOut } = useAuth();
     const location = useLocation();
 
@@ -63,7 +63,7 @@ export function Sidebar() {
     };
 
     return (
-        <div className="flex h-screen w-64 flex-col border-r bg-white">
+        <div className="flex h-full flex-col bg-white">
             <div className="flex h-16 items-center border-b px-6">
                 <div className="bg-blue-600 p-1.5 rounded-lg mr-3">
                     <Hospital className="h-5 w-5 text-white" />
@@ -128,6 +128,14 @@ export function Sidebar() {
                     Sair
                 </Button>
             </div>
+        </div>
+    );
+}
+
+export function Sidebar() {
+    return (
+        <div className="hidden border-r bg-white md:flex md:w-64 md:flex-col md:fixed md:inset-y-0 z-50">
+            <SidebarContent />
         </div>
     );
 }
