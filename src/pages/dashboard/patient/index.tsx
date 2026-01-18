@@ -4,11 +4,12 @@ import { useAppointments } from "@/hooks/useAppointments"
 import { useMemo, useState, useEffect } from "react"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
-import { Link } from "react-router-dom"
+import { useNavigate } from "react-router-dom"
 
 export default function PatientDashboard() {
-    const { appointments } = useAppointments();
+    const { appointments, updateAppointment } = useAppointments();
     const [now, setNow] = useState(new Date());
+    const navigate = useNavigate();
 
     useEffect(() => {
         const timer = setInterval(() => {
@@ -16,6 +17,7 @@ export default function PatientDashboard() {
         }, 60000);
         return () => clearInterval(timer);
     }, []);
+
 
     const stats = useMemo(() => {
         return {
@@ -65,6 +67,8 @@ export default function PatientDashboard() {
                 return <span className="inline-flex items-center rounded-full bg-orange-100 px-2.5 py-0.5 text-xs font-semibold text-orange-800">Pendente</span>;
             case 'cancelado':
                 return <span className="inline-flex items-center rounded-full bg-red-100 px-2.5 py-0.5 text-xs font-semibold text-red-800">Cancelada</span>;
+            case 'nao_compareceu':
+                return <span className="inline-flex items-center rounded-full bg-slate-100 px-2.5 py-0.5 text-xs font-semibold text-slate-800">Não Compareceu</span>;
             default:
                 return null;
         }
@@ -85,6 +89,11 @@ export default function PatientDashboard() {
 
     const remainingText = nextAppointment ? getRemainingTimeText(nextAppointment.dateTime) : null;
     const canJoin = nextAppointment && nextAppointment.modality === 'telemedicine' && !remainingText;
+
+    const handleEnterRoom = (appointment: any) => {
+        updateAppointment({ ...appointment, status: 'realizado' });
+        navigate(`/telemedicina/${appointment.id}`);
+    };
 
     return (
         <div className="space-y-6">
@@ -160,11 +169,14 @@ export default function PatientDashboard() {
                                         {nextAppointment.modality === 'telemedicine' && (
                                             <>
                                                 {canJoin ? (
-                                                    <Button size="sm" variant="secondary" className="gap-2 text-blue-700 hover:text-blue-800 bg-white hover:bg-blue-50" asChild>
-                                                        <Link to={`/telemedicina/${nextAppointment.id}`}>
-                                                            <Video className="w-4 h-4" />
-                                                            Acessar Sala
-                                                        </Link>
+                                                    <Button
+                                                        size="sm"
+                                                        variant="secondary"
+                                                        className="gap-2 text-blue-700 hover:text-blue-800 bg-white hover:bg-blue-50"
+                                                        onClick={() => handleEnterRoom(nextAppointment)}
+                                                    >
+                                                        <Video className="w-4 h-4" />
+                                                        Acessar Sala
                                                     </Button>
                                                 ) : (
                                                     <div className="flex items-center gap-2 text-xs text-blue-200 bg-blue-900/40 px-3 py-1.5 rounded-md border border-blue-500/30">

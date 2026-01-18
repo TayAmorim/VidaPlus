@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, createContext, useContext, type ReactNode } from 'react';
 
 export interface Appointment {
     id: string;
@@ -8,7 +8,7 @@ export interface Appointment {
     patientName: string;
     doctorName: string;
     description: string;
-    status: 'agendado' | 'pendente' | 'realizado' | 'cancelado';
+    status: 'agendado' | 'pendente' | 'realizado' | 'cancelado' | 'nao_compareceu';
     modality: 'presential' | 'telemedicine';
 }
 
@@ -50,7 +50,16 @@ const MOCK_APPOINTMENTS: Appointment[] = [
 
 const STORAGE_KEY = 'vidaplus_appointments';
 
-export function useAppointments() {
+interface AppointmentsContextType {
+    appointments: Appointment[];
+    addAppointment: (newAppointment: Omit<Appointment, 'id' | 'status'>) => void;
+    updateAppointment: (updatedAppointment: Appointment) => void;
+    cancelAppointment: (id: string) => void;
+}
+
+const AppointmentsContext = createContext<AppointmentsContextType | undefined>(undefined);
+
+export function AppointmentsProvider({ children }: { children: ReactNode }): ReactNode {
     const [appointments, setAppointments] = useState<Appointment[]>([]);
 
     useEffect(() => {
@@ -65,26 +74,57 @@ export function useAppointments() {
                     console.error("Failed to parse appointments from localStorage", e);
                 }
             } else {
-
                 loadedAppointments = [...MOCK_APPOINTMENTS];
             }
 
-
             const now = new Date();
             const validAppointments = loadedAppointments.filter(app => {
-
                 if (!app.date) return true;
                 const appDate = new Date(app.date);
                 const diffTime = Math.abs(now.getTime() - appDate.getTime());
                 const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-
                 return diffDays <= 30;
             });
 
-            setAppointments(validAppointments);
+
+            let hasUpdates = false;
+            const checkStatusAppointments = validAppointments.map(app => {
+                if (app.status === 'realizado' || app.status === 'cancelado' || app.status === 'nao_compareceu' || !app.date || !app.time) {
+                    return app;
+                }
+
+                const appDateTime = new Date(`${app.date}T${app.time}`);
+                const diffMs = appDateTime.getTime() - now.getTime();
+                const diffHours = diffMs / (1000 * 60 * 60);
+                const minsPassed = (now.getTime() - appDateTime.getTime()) / 60000;
+
+
+                if ((app.status === 'agendado' || app.status === 'pendente') && minsPassed > 60) {
+                    hasUpdates = true;
+                    return { ...app, status: 'nao_compareceu' as const };
+                }
+
+
+                if (app.status === 'agendado' && diffHours <= 12 && diffHours > 0) {
+                    hasUpdates = true;
+                    return { ...app, status: 'pendente' as const };
+                }
+
+                return app;
+            });
+
+            setAppointments(checkStatusAppointments);
+
+            if (hasUpdates) {
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(checkStatusAppointments));
+            }
         };
 
         loadAppointments();
+
+
+        const interval = setInterval(loadAppointments, 60000);
+        return () => clearInterval(interval);
     }, []);
 
     const addAppointment = (newAppointment: Omit<Appointment, 'id' | 'status'>) => {
@@ -115,10 +155,18 @@ export function useAppointments() {
         localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedAppointments));
     };
 
-    return {
-        appointments,
-        addAppointment,
-        updateAppointment,
-        cancelAppointment
-    };
+    return (
+        <AppointmentsContext.Provider value={{ appointments, addAppointment, updateAppointment, cancelAppointment }
+        }>
+            {children}
+        </AppointmentsContext.Provider>
+    );
+}
+
+export function useAppointments() {
+    const context = useContext(AppointmentsContext);
+    if (context === undefined) {
+        throw new Error('useAppointments must be used within an AppointmentsProvider');
+    }
+    return context;
 }

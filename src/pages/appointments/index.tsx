@@ -34,7 +34,8 @@ import {
     Video,
     X,
     Pencil,
-    Ban
+    Ban,
+    UserX
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { useAppointments, type Appointment } from "@/hooks/useAppointments"
@@ -78,6 +79,14 @@ export default function AppointmentsPage() {
                 <span className="inline-flex items-center self-start md:self-center rounded-full bg-red-50 px-2.5 py-0.5 text-xs font-medium text-red-700 ring-1 ring-inset ring-red-600/20">
                     <Ban className="mr-1 h-3 w-3" />
                     Cancelado
+                </span>
+            );
+        }
+        else if (status === "nao_compareceu") {
+            return (
+                <span className="inline-flex items-center self-start md:self-center rounded-full bg-slate-50 px-2.5 py-0.5 text-xs font-medium text-slate-700 ring-1 ring-inset ring-slate-600/20">
+                    <UserX className="mr-1 h-3 w-3" />
+                    Não Compareceu
                 </span>
             );
         }
@@ -187,6 +196,7 @@ export default function AppointmentsPage() {
                                     <SelectItem value="realizado">Realizado</SelectItem>
                                     <SelectItem value="pendente">Pendente</SelectItem>
                                     <SelectItem value="cancelado">Cancelado</SelectItem>
+                                    <SelectItem value="nao_compareceu">Não Compareceu</SelectItem>
                                 </SelectContent>
                             </Select>
                         </div>
