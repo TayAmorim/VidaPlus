@@ -8,7 +8,7 @@ export interface Appointment {
     patientName: string;
     doctorName: string;
     description: string;
-    status: 'agendado' | 'pendente' | 'realizado';
+    status: 'agendado' | 'pendente' | 'realizado' | 'cancelado';
     modality: 'presential' | 'telemedicine';
 }
 
@@ -99,8 +99,26 @@ export function useAppointments() {
         localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedAppointments));
     };
 
+    const updateAppointment = (updatedAppointment: Appointment) => {
+        const updatedAppointments = appointments.map(app =>
+            app.id === updatedAppointment.id ? updatedAppointment : app
+        );
+        setAppointments(updatedAppointments);
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedAppointments));
+    };
+
+    const cancelAppointment = (id: string) => {
+        const updatedAppointments = appointments.map(app =>
+            app.id === id ? { ...app, status: 'cancelado' as const } : app
+        );
+        setAppointments(updatedAppointments);
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedAppointments));
+    };
+
     return {
         appointments,
-        addAppointment
+        addAppointment,
+        updateAppointment,
+        cancelAppointment
     };
 }

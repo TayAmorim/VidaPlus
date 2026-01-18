@@ -13,6 +13,17 @@ import {
     SelectValue,
 } from "@/components/ui/select"
 import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+    AlertDialogTrigger,
+} from "@/components/ui/alert-dialog"
+import {
     Calendar as CalendarIcon,
     CheckCircle2,
     AlertCircle,
@@ -20,16 +31,20 @@ import {
     User,
     Stethoscope,
     Video,
-    X
+    X,
+    Pencil,
+    Ban
 } from "lucide-react"
 import { cn } from "@/lib/utils"
-import { useAppointments } from "@/hooks/useAppointments"
+import { useAppointments, type Appointment } from "@/hooks/useAppointments"
 
 export default function AppointmentsPage() {
-    const { appointments, addAppointment } = useAppointments();
+    const { appointments, addAppointment, updateAppointment, cancelAppointment } = useAppointments();
     const [statusFilter, setStatusFilter] = useState("todos");
     const [isCreating, setIsCreating] = useState(false);
 
+    // Form State
+    const [editId, setEditId] = useState<string | null>(null);
     const [modality, setModality] = useState<"presential" | "telemedicine">("presential");
     const [specialty, setSpecialty] = useState("");
     const [doctor, setDoctor] = useState("");
@@ -57,14 +72,21 @@ export default function AppointmentsPage() {
                     Pendente
                 </span>
             );
+        } else if (status === "cancelado") {
+            return (
+                <span className="inline-flex items-center self-start md:self-center rounded-full bg-red-50 px-2.5 py-0.5 text-xs font-medium text-red-700 ring-1 ring-inset ring-red-600/20">
+                    <Ban className="mr-1 h-3 w-3" />
+                    Cancelado
+                </span>
+            );
         }
         return null;
     };
 
-    const handleCreateAppointment = () => {
-        if (!date || !time || !startCreate) return;
+    const handleCreateOrUpdateAppointment = () => {
+        if (!date || !time) return; // Basic validation
 
-        addAppointment({
+        const appointmentData = {
             date,
             time,
             duration: `${duration}min`,
@@ -72,16 +94,52 @@ export default function AppointmentsPage() {
             doctorName: doctor === 'any' || !doctor ? `Especialista em ${specialty || 'Clínica Geral'}` : (doctor === 'dr-carlos' ? 'Dr. Carlos Silva' : 'Dra. Maria Santos'),
             description: reason || "Sem descrição",
             modality: modality,
-            specialty: specialty || "Clínico Geral"
-        } as any);
+            status: 'agendado' as const
+        };
 
+        if (editId) {
+            const existing = appointments.find(a => a.id === editId);
+            if (existing) {
+                updateAppointment({
+                    ...existing,
+                    ...appointmentData,
+                    status: existing.status === 'cancelado' ? 'agendado' : existing.status
+                });
+            }
+        } else {
+            addAppointment(appointmentData);
+        }
+
+        resetForm();
+    };
+
+    const handleEdit = (appointment: Appointment) => {
+        setEditId(appointment.id);
+        setModality(appointment.modality);
+        setDuration(appointment.duration.replace('min', '') || "30");
+        setReason(appointment.description);
+        setDate(appointment.date);
+        setTime(appointment.time);
+
+        if (appointment.doctorName.includes("Carlos")) setDoctor("dr-carlos");
+        else if (appointment.doctorName.includes("Maria")) setDoctor("dra-maria");
+        else setDoctor("any");
+
+        setIsCreating(true);
+    };
+
+    const resetForm = () => {
         setIsCreating(false);
+        setEditId(null);
         setReason("");
         setDate("");
         setTime("");
+        setDoctor("");
+        setSpecialty("");
     };
 
     const startCreate = () => {
+        resetForm();
         setIsCreating(true);
     };
 
@@ -120,6 +178,7 @@ export default function AppointmentsPage() {
                                     <SelectItem value="agendado">Agendado</SelectItem>
                                     <SelectItem value="realizado">Realizado</SelectItem>
                                     <SelectItem value="pendente">Pendente</SelectItem>
+                                    <SelectItem value="cancelado">Cancelado</SelectItem>
                                 </SelectContent>
                             </Select>
                         </div>
@@ -143,8 +202,10 @@ export default function AppointmentsPage() {
                 <Card className="shadow-lg border-blue-100">
                     <CardHeader className="border-b pb-4">
                         <div className="flex items-center justify-between">
-                            <CardTitle className="text-xl font-semibold text-slate-900">Novo Agendamento</CardTitle>
-                            <Button variant="ghost" size="icon" onClick={() => setIsCreating(false)}>
+                            <CardTitle className="text-xl font-semibold text-slate-900">
+                                {editId ? "Editar Agendamento" : "Novo Agendamento"}
+                            </CardTitle>
+                            <Button variant="ghost" size="icon" onClick={resetForm}>
                                 <X className="h-4 w-4 text-slate-500" />
                             </Button>
                         </div>
@@ -182,7 +243,6 @@ export default function AppointmentsPage() {
                                 </button>
                             </div>
                         </div>
-
 
                         <div className="space-y-2">
                             <label className="text-sm font-medium text-slate-700">Especialidade</label>
@@ -255,8 +315,10 @@ export default function AppointmentsPage() {
 
 
                         <div className="flex justify-end gap-3 pt-4 border-t">
-                            <Button variant="outline" onClick={() => setIsCreating(false)}>Cancelar</Button>
-                            <Button className="bg-blue-600 hover:bg-blue-700" onClick={handleCreateAppointment}>Agendar Consulta</Button>
+                            <Button variant="outline" onClick={resetForm}>Cancelar</Button>
+                            <Button className="bg-blue-600 hover:bg-blue-700" onClick={handleCreateOrUpdateAppointment}>
+                                {editId ? "Salvar Alterações" : "Agendar Consulta"}
+                            </Button>
                         </div>
                     </CardContent>
                 </Card>
@@ -339,7 +401,41 @@ export default function AppointmentsPage() {
                                             <p className="text-xs text-slate-500 pl-6">{appointment.description}</p>
                                         </div>
                                     </div>
-                                    {getStatusBadge(appointment.status)}
+
+                                    <div className="flex items-center gap-3">
+                                        {getStatusBadge(appointment.status)}
+
+                                        <div className="flex items-center gap-1">
+                                            {appointment.status !== 'cancelado' && (
+                                                <>
+                                                    <Button variant="ghost" size="icon" className="h-8 w-8 text-slate-400 hover:text-blue-600" onClick={() => handleEdit(appointment)}>
+                                                        <Pencil className="h-4 w-4" />
+                                                    </Button>
+                                                    <AlertDialog>
+                                                        <AlertDialogTrigger asChild>
+                                                            <Button variant="ghost" size="icon" className="h-8 w-8 text-slate-400 hover:text-red-600">
+                                                                <Ban className="h-4 w-4" />
+                                                            </Button>
+                                                        </AlertDialogTrigger>
+                                                        <AlertDialogContent>
+                                                            <AlertDialogHeader>
+                                                                <AlertDialogTitle>Cancelar Agendamento</AlertDialogTitle>
+                                                                <AlertDialogDescription>
+                                                                    Tem certeza que deseja cancelar este agendamento? Esta ação não pode ser desfeita.
+                                                                </AlertDialogDescription>
+                                                            </AlertDialogHeader>
+                                                            <AlertDialogFooter>
+                                                                <AlertDialogCancel>Voltar</AlertDialogCancel>
+                                                                <AlertDialogAction className="bg-red-600 hover:bg-red-700" onClick={() => cancelAppointment(appointment.id)}>
+                                                                    Confirmar Cancelamento
+                                                                </AlertDialogAction>
+                                                            </AlertDialogFooter>
+                                                        </AlertDialogContent>
+                                                    </AlertDialog>
+                                                </>
+                                            )}
+                                        </div>
+                                    </div>
                                 </div>
                             ))
                         ) : (
