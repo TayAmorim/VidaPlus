@@ -40,6 +40,13 @@ import {
 import { cn } from "@/lib/utils"
 import { useAppointments, type Appointment } from "@/hooks/useAppointments"
 
+const DOCTOR_SCHEDULES: Record<string, string[]> = {
+    'dr-carlos': ['08:00', '08:30', '09:00', '09:30', '10:00', '10:30', '11:00', '11:30'],
+    'dra-maria': ['14:00', '14:30', '15:00', '15:30', '16:00', '16:30', '17:00', '17:30'],
+    'any': ['08:00', '08:30', '09:00', '09:30', '10:00', '10:30', '11:00', '11:30', '14:00', '14:30', '15:00', '15:30', '16:00', '16:30', '17:00', '17:30']
+};
+
+
 export default function AppointmentsPage() {
     const { appointments, addAppointment, updateAppointment, cancelAppointment } = useAppointments();
     const [statusFilter, setStatusFilter] = useState("todos");
@@ -58,6 +65,9 @@ export default function AppointmentsPage() {
     const filteredAppointments = appointments.filter(appointment =>
         statusFilter === "todos" || appointment.status === statusFilter
     );
+
+    const availableSlots = doctor ? (DOCTOR_SCHEDULES[doctor] || []) : [];
+
 
     const getStatusBadge = (status: string) => {
         if (status === "agendado" || status === "realizado") {
@@ -315,12 +325,18 @@ export default function AppointmentsPage() {
                             </div>
                             <div className="space-y-2">
                                 <label className="text-sm font-medium text-slate-700">Horário <span className="text-red-500">*</span></label>
-                                <Input
-                                    type="time"
-                                    value={time}
-                                    onChange={(e) => setTime(e.target.value)}
-                                    className={cn(!time && error && "border-red-500 focus-visible:ring-red-500")}
-                                />
+                                <Select value={time} onValueChange={setTime} disabled={!doctor}>
+                                    <SelectTrigger className={cn(!time && error && "border-red-500 focus-visible:ring-red-500")}>
+                                        <SelectValue placeholder={doctor ? "Selecione um horário" : "Selecione um médico primeiro"} />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        {availableSlots.map((slot) => (
+                                            <SelectItem key={slot} value={slot}>
+                                                {slot}
+                                            </SelectItem>
+                                        ))}
+                                    </SelectContent>
+                                </Select>
                             </div>
                         </div>
 
@@ -425,7 +441,7 @@ export default function AppointmentsPage() {
                                         <div className="w-16 shrink-0">
                                             <span className="block text-sm font-bold text-slate-900">{appointment.time}</span>
                                             <span className="text-xs text-slate-500">{appointment.duration}</span>
-                                            {appointment.date && <span className="block text-xs text-slate-400 mt-1">{new Date(appointment.date).toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' })}</span>}
+                                            {appointment.date && <span className="block text-xs text-slate-400 mt-1">{appointment.date.split('-').reverse().join('/')}</span>}
                                         </div>
                                         <div className="space-y-1">
                                             <div className="flex items-center gap-2">
