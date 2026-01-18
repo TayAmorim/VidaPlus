@@ -39,7 +39,6 @@ const MOCK_USERS: User[] = [
 
 export async function login(email: string, password: string): Promise<User> {
 
-
     const user = MOCK_USERS.find(u => u.email === email);
 
     const envPassword = import.meta.env.VITE_APP_PASSWORD;

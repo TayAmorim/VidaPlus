@@ -5,6 +5,7 @@ import Login from "./pages/Login"
 import AdminDashboard from "./pages/dashboard/admin"
 import ProfessionalDashboard from "./pages/dashboard/professional"
 import PatientDashboard from "./pages/dashboard/patient"
+import AppointmentsPage from "./pages/appointments"
 import AppLayout from "@/components/layout/app-layout"
 
 function App() {
@@ -25,6 +26,10 @@ function App() {
 
             <Route element={<ProtectedRoute allowedRoles={['patient']} />}>
               <Route path="/dashboard/patient" element={<PatientDashboard />} />
+            </Route>
+
+            <Route element={<ProtectedRoute allowedRoles={['admin', 'professional', 'patient']} />}>
+              <Route path="/agendamentos" element={<AppointmentsPage />} />
             </Route>
           </Route>
         </Routes>
