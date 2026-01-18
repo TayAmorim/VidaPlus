@@ -35,6 +35,17 @@ O projeto foi construído utilizando uma arquitetura moderna baseada em componen
 
 Pré-requisitos: Node.js instalado.
 
+## ⚙️ Configuração
+
+Antes de executar, configure as variáveis de ambiente:
+
+1. Renomeie o arquivo `.env.example` para `.env`
+2. Defina a senha de acesso na variável `VITE_APP_PASSWORD`
+   
+> **Nota:** A senha correta para avaliação encontra-se na documentação do projeto postada no portal AVA Univirtus.
+
+## 🚀 Como Executar o Projeto
+
 1. **Clone o repositório:**
    ```bash
    git clone [[https://github.com/SEU-USUARIO/sghss-vidaplus.git](https://github.com/SEU-USUARIO/sghss-vidaplus.git)](https://github.com/TayAmorim/VidaPlus.git)

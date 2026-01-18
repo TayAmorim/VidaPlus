@@ -38,7 +38,9 @@ export async function login(email: string, password: string): Promise<User> {
 
     const user = MOCK_USERS.find(u => u.email === email);
 
-    if (user && password.length >= 3) {
+    const envPassword = import.meta.env.VITE_APP_PASSWORD;
+
+    if (user && password === envPassword) {
         return user;
     }
 
