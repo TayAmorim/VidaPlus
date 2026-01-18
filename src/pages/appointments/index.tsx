@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import {
     Select,
     SelectContent,
@@ -45,6 +46,7 @@ export default function AppointmentsPage() {
 
     // Form State
     const [editId, setEditId] = useState<string | null>(null);
+    const [error, setError] = useState<string | null>(null);
     const [modality, setModality] = useState<"presential" | "telemedicine">("presential");
     const [specialty, setSpecialty] = useState("");
     const [doctor, setDoctor] = useState("");
@@ -84,14 +86,19 @@ export default function AppointmentsPage() {
     };
 
     const handleCreateOrUpdateAppointment = () => {
-        if (!date || !time) return; // Basic validation
+        setError(null);
+
+        if (!date || !time || !doctor || !modality) {
+            setError("Por favor, preencha todos os campos obrigatórios: Médico, Data, Horário e Modalidade.");
+            return;
+        }
 
         const appointmentData = {
             date,
             time,
             duration: `${duration}min`,
             patientName: "Você (Logado)",
-            doctorName: doctor === 'any' || !doctor ? `Especialista em ${specialty || 'Clínica Geral'}` : (doctor === 'dr-carlos' ? 'Dr. Carlos Silva' : 'Dra. Maria Santos'),
+            doctorName: doctor === 'any' ? `Especialista em ${specialty || 'Clínica Geral'}` : (doctor === 'dr-carlos' ? 'Dr. Carlos Silva' : 'Dra. Maria Santos'),
             description: reason || "Sem descrição",
             modality: modality,
             status: 'agendado' as const
@@ -114,6 +121,7 @@ export default function AppointmentsPage() {
     };
 
     const handleEdit = (appointment: Appointment) => {
+        setError(null);
         setEditId(appointment.id);
         setModality(appointment.modality);
         setDuration(appointment.duration.replace('min', '') || "30");
@@ -131,6 +139,7 @@ export default function AppointmentsPage() {
     const resetForm = () => {
         setIsCreating(false);
         setEditId(null);
+        setError(null);
         setReason("");
         setDate("");
         setTime("");
@@ -212,6 +221,16 @@ export default function AppointmentsPage() {
                     </CardHeader>
                     <CardContent className="p-6 space-y-6">
 
+                        {error && (
+                            <Alert variant="destructive">
+                                <AlertCircle className="h-4 w-4" />
+                                <AlertTitle>Erro</AlertTitle>
+                                <AlertDescription>
+                                    {error}
+                                </AlertDescription>
+                            </Alert>
+                        )}
+
                         <div className="space-y-3">
                             <label className="text-sm font-medium text-slate-700">Modalidade de Atendimento</label>
                             <div className="grid grid-cols-2 gap-4">
@@ -261,10 +280,10 @@ export default function AppointmentsPage() {
 
 
                         <div className="space-y-2">
-                            <label className="text-sm font-medium text-slate-700">Médico (opcional)</label>
+                            <label className="text-sm font-medium text-slate-700">Médico <span className="text-red-500">*</span></label>
                             <Select value={doctor} onValueChange={setDoctor}>
-                                <SelectTrigger>
-                                    <SelectValue placeholder="Qualquer médico disponível" />
+                                <SelectTrigger className={cn(!doctor && error && "border-red-500 focus-visible:ring-red-500")}>
+                                    <SelectValue placeholder="Selecione um médico" />
                                 </SelectTrigger>
                                 <SelectContent>
                                     <SelectItem value="any">Qualquer médico disponível</SelectItem>
@@ -277,12 +296,22 @@ export default function AppointmentsPage() {
 
                         <div className="grid grid-cols-2 gap-4">
                             <div className="space-y-2">
-                                <label className="text-sm font-medium text-slate-700">Data</label>
-                                <Input type="date" value={date} onChange={(e) => setDate(e.target.value)} />
+                                <label className="text-sm font-medium text-slate-700">Data <span className="text-red-500">*</span></label>
+                                <Input
+                                    type="date"
+                                    value={date}
+                                    onChange={(e) => setDate(e.target.value)}
+                                    className={cn(!date && error && "border-red-500 focus-visible:ring-red-500")}
+                                />
                             </div>
                             <div className="space-y-2">
-                                <label className="text-sm font-medium text-slate-700">Horário</label>
-                                <Input type="time" value={time} onChange={(e) => setTime(e.target.value)} />
+                                <label className="text-sm font-medium text-slate-700">Horário <span className="text-red-500">*</span></label>
+                                <Input
+                                    type="time"
+                                    value={time}
+                                    onChange={(e) => setTime(e.target.value)}
+                                    className={cn(!time && error && "border-red-500 focus-visible:ring-red-500")}
+                                />
                             </div>
                         </div>
 
