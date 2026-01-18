@@ -8,7 +8,7 @@ export interface User {
     avatar?: string;
 }
 
-// Mock users database
+
 const MOCK_USERS: User[] = [
     {
         id: '1',
@@ -34,14 +34,10 @@ const MOCK_USERS: User[] = [
 ];
 
 export async function login(email: string, password: string): Promise<User> {
-    // Simulate API delay
-    await new Promise(resolve => setTimeout(resolve, 800));
 
-    // Mock validation (accept any password '123' for demo purposes, or specific one)
+
     const user = MOCK_USERS.find(u => u.email === email);
 
-    // Basic validation check - strict functionality for 'doc123', 'admin123', 'patient123' 
-    // or just generic check for simplicity as requested in "mock"
     if (user && password.length >= 3) {
         return user;
     }
@@ -50,10 +46,6 @@ export async function login(email: string, password: string): Promise<User> {
 }
 
 export async function getUserProfile(): Promise<User | null> {
-    // Simulate API delay
     await new Promise(resolve => setTimeout(resolve, 500));
-
-    // In a real app, this would use a token. 
-    // Here we just mock-return the persisted user if handled by context.
     return null;
 }

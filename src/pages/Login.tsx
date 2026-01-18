@@ -15,7 +15,6 @@ export default function Login() {
   const { signIn, isLoading, user } = useAuth();
   const navigate = useNavigate();
 
-  // Redirect if already logged in
   React.useEffect(() => {
     if (user) {
       if (user.role === 'admin') navigate('/dashboard/admin');
@@ -30,24 +29,12 @@ export default function Login() {
 
     try {
       await signIn(email, password);
-      // Navigation handled by useEffect
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Falha ao autenticar');
     }
   };
 
-  const fillCredentials = (role: 'admin' | 'professional' | 'patient') => {
-    if (role === 'admin') {
-      setEmail('admin@vidaplus.com');
-      setPassword('admin123');
-    } else if (role === 'professional') {
-      setEmail('doc@vidaplus.com');
-      setPassword('doc123');
-    } else {
-      setEmail('patient@vidaplus.com');
-      setPassword('patient123');
-    }
-  };
+
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-blue-100 p-4 font-sans">
@@ -115,45 +102,9 @@ export default function Login() {
             </Button>
           </form>
 
-          <div className="relative">
-            <div className="absolute inset-0 flex items-center">
-              <span className="w-full border-t border-slate-100" />
-            </div>
-            <div className="relative flex justify-center text-xs uppercase">
-              <span className="bg-white px-2 text-slate-500">
-              </span>
-            </div>
-          </div>
 
-          <div className="space-y-3 pt-2">
-            <div className="text-center text-sm text-slate-500 mb-4">
-              Acesso rápido (demonstração):
-            </div>
 
-            <Button
-              variant="outline"
-              className="w-full h-11 justify-center bg-purple-50 text-purple-700 border-purple-100 hover:bg-purple-100 hover:text-purple-800"
-              onClick={() => fillCredentials('admin')}
-            >
-              Entrar como Administrador
-            </Button>
 
-            <Button
-              variant="outline"
-              className="w-full h-11 justify-center bg-green-50 text-green-700 border-green-100 hover:bg-green-100 hover:text-green-800"
-              onClick={() => fillCredentials('professional')}
-            >
-              Entrar como Profissional de Saúde
-            </Button>
-
-            <Button
-              variant="outline"
-              className="w-full h-11 justify-center bg-blue-50 text-blue-700 border-blue-100 hover:bg-blue-100 hover:text-blue-800"
-              onClick={() => fillCredentials('patient')}
-            >
-              Entrar como Paciente
-            </Button>
-          </div>
         </CardContent>
       </Card>
     </div>

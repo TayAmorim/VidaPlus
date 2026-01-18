@@ -15,7 +15,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const [user, setUser] = useState<User | null>(null);
     const [isLoading, setIsLoading] = useState<boolean>(true);
 
-    // Load user from localStorage on mount
     useEffect(() => {
         const storedUser = localStorage.getItem('vidaplus_user');
         if (storedUser) {
