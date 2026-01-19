@@ -40,11 +40,38 @@ import {
 import { cn } from "@/lib/utils"
 import { useAppointments, type Appointment } from "@/hooks/useAppointments"
 
-const DOCTOR_SCHEDULES: Record<string, string[]> = {
-    'dr-carlos': ['08:00', '08:30', '09:00', '09:30', '10:00', '10:30', '11:00', '11:30'],
-    'dra-maria': ['14:00', '14:30', '15:00', '15:30', '16:00', '16:30', '17:00', '17:30'],
-    'any': ['08:00', '08:30', '09:00', '09:30', '10:00', '10:30', '11:00', '11:30', '14:00', '14:30', '15:00', '15:30', '16:00', '16:30', '17:00', '17:30']
-};
+const DOCTORS_DATA = [
+    {
+        id: 'dr-carlos',
+        name: 'Dr. Carlos Silva',
+        specialty: 'cardiologia',
+        schedule: ['08:00', '08:30', '09:00', '09:30', '10:00', '14:00', '14:30', '15:00']
+    },
+    {
+        id: 'dra-maria',
+        name: 'Dra. Maria Santos',
+        specialty: 'pediatria',
+        schedule: ['09:00', '09:30', '10:00', '10:30', '11:00', '15:00', '15:30', '16:00']
+    },
+    {
+        id: 'dr-joao',
+        name: 'Dr. João Costa',
+        specialty: 'ortopedia',
+        schedule: ['08:00', '09:00', '10:00', '11:00', '14:00', '15:00', '16:00']
+    },
+    {
+        id: 'dra-ana',
+        name: 'Dra. Ana Oliveira',
+        specialty: 'clinico',
+        schedule: ['08:00', '08:30', '09:00', '09:30', '10:00', '10:30', '11:00', '11:30', '14:00', '14:30', '15:00', '15:30', '16:00', '16:30', '17:00', '17:30']
+    },
+    {
+        id: 'dr-pedro',
+        name: 'Dr. Pedro Souza',
+        specialty: 'cardiologia',
+        schedule: ['10:00', '10:30', '11:00', '11:30', '13:00', '13:30', '14:00']
+    }
+];
 
 
 export default function AppointmentsPage() {
@@ -66,7 +93,17 @@ export default function AppointmentsPage() {
         statusFilter === "todos" || appointment.status === statusFilter
     );
 
-    const availableSlots = doctor ? (DOCTOR_SCHEDULES[doctor] || []) : [];
+    const filteredDoctors = doctor ? DOCTORS_DATA.filter(d => d.id === doctor) : (
+        specialty ? DOCTORS_DATA.filter(d => d.specialty === specialty) : DOCTORS_DATA
+    );
+
+    const handleSpecialtyChange = (value: string) => {
+        setSpecialty(value);
+        setDoctor("");
+        setTime("");
+    };
+
+    const availableSlots = doctor ? (DOCTORS_DATA.find(d => d.id === doctor)?.schedule || []) : [];
 
 
     const getStatusBadge = (status: string) => {
@@ -111,12 +148,14 @@ export default function AppointmentsPage() {
             return;
         }
 
+        const selectedDoctor = DOCTORS_DATA.find(d => d.id === doctor);
+
         const appointmentData = {
             date,
             time,
             duration: `${duration}min`,
             patientName: "Você (Logado)",
-            doctorName: doctor === 'any' ? `Especialista em ${specialty || 'Clínica Geral'}` : (doctor === 'dr-carlos' ? 'Dr. Maria Silva' : 'Dra. Maria Santos'),
+            doctorName: selectedDoctor ? `${selectedDoctor.name} - ${selectedDoctor.specialty.charAt(0).toUpperCase() + selectedDoctor.specialty.slice(1)}` : "Médico Desconhecido",
             description: reason || "Sem descrição",
             modality: modality,
             status: 'agendado' as const
@@ -147,9 +186,16 @@ export default function AppointmentsPage() {
         setDate(appointment.date);
         setTime(appointment.time);
 
-        if (appointment.doctorName.includes("Carlos")) setDoctor("dr-carlos");
-        else if (appointment.doctorName.includes("Maria")) setDoctor("dra-maria");
-        else setDoctor("any");
+        if (appointment.doctorName) {
+            const foundDoctor = DOCTORS_DATA.find(d => appointment.doctorName.includes(d.name));
+            if (foundDoctor) {
+                setDoctor(foundDoctor.id);
+                setSpecialty(foundDoctor.specialty);
+            } else {
+                setDoctor("");
+                setSpecialty("");
+            }
+        }
 
         setIsCreating(true);
     };
@@ -161,7 +207,6 @@ export default function AppointmentsPage() {
         setReason("");
         setDate("");
         setTime("");
-        setDoctor("");
         setSpecialty("");
     };
 
@@ -266,25 +311,33 @@ export default function AppointmentsPage() {
                                     <span className="font-semibold">Presencial</span>
                                     <span className="text-xs text-center opacity-80">Atendimento no hospital</span>
                                 </button>
-                                <button
-                                    className={cn(
-                                        "flex flex-col items-center justify-center p-4 rounded-xl border-2 transition-all",
-                                        modality === "telemedicine"
-                                            ? "border-blue-600 bg-blue-50/50 text-blue-700"
-                                            : "border-slate-100 bg-white text-slate-600 hover:border-slate-200"
-                                    )}
-                                    onClick={() => setModality("telemedicine")}
-                                >
-                                    <Video className="h-6 w-6 mb-2" />
-                                    <span className="font-semibold">Telemedicina</span>
-                                    <span className="text-xs text-center opacity-80">Consulta por vídeo</span>
-                                </button>
+                                <div className="relative overflow-hidden group rounded-xl border-2 transition-all cursor-pointer hover:border-blue-600 hover:shadow-md" onClick={() => setModality("telemedicine")}>
+                                    <div className={cn(
+                                        "flex flex-col items-center justify-center p-4 h-full z-10 relative transition-colors",
+                                        modality === "telemedicine" ? "bg-blue-50/90 text-blue-700" : "bg-white/90 text-slate-600"
+                                    )}>
+                                        <Video className="h-6 w-6 mb-2" />
+                                        <span className="font-semibold">Telemedicina</span>
+                                        <span className="text-xs text-center opacity-80">Consulta por vídeo</span>
+                                    </div>
+                                    <div
+                                        className={cn(
+                                            "absolute inset-0 bg-cover bg-center transition-opacity duration-300",
+                                            modality === "telemedicine" ? "opacity-20" : "opacity-10 group-hover:opacity-20"
+                                        )}
+                                        style={{ backgroundImage: `url('/doctor.jpg')` }}
+                                    />
+                                    <div className={cn(
+                                        "absolute inset-0 border-2 rounded-xl pointer-events-none transition-colors",
+                                        modality === "telemedicine" ? "border-blue-600" : "border-transparent"
+                                    )} />
+                                </div>
                             </div>
                         </div>
 
                         <div className="space-y-2">
                             <label className="text-sm font-medium text-slate-700">Especialidade</label>
-                            <Select value={specialty} onValueChange={setSpecialty}>
+                            <Select value={specialty} onValueChange={handleSpecialtyChange}>
                                 <SelectTrigger>
                                     <SelectValue placeholder="Selecione a especialidade" />
                                 </SelectTrigger>
@@ -305,9 +358,11 @@ export default function AppointmentsPage() {
                                     <SelectValue placeholder="Selecione um médico" />
                                 </SelectTrigger>
                                 <SelectContent>
-                                    <SelectItem value="any">Qualquer médico disponível</SelectItem>
-                                    <SelectItem value="dr-carlos">Dr. Maria Silva</SelectItem>
-                                    <SelectItem value="dra-maria">Dra. Maria Santos</SelectItem>
+                                    {filteredDoctors.map((doc) => (
+                                        <SelectItem key={doc.id} value={doc.id}>
+                                            {doc.name}
+                                        </SelectItem>
+                                    ))}
                                 </SelectContent>
                             </Select>
                         </div>

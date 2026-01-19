@@ -71,7 +71,7 @@ export function AppointmentsProvider({ children }: { children: ReactNode }): Rea
                 try {
                     loadedAppointments = JSON.parse(stored);
                 } catch (e) {
-                    console.error("Failed to parse appointments from localStorage", e);
+                    console.error("Falha ao analisar agendamentos do localStorage", e);
                 }
             } else {
                 loadedAppointments = [...MOCK_APPOINTMENTS];
@@ -166,7 +166,7 @@ export function AppointmentsProvider({ children }: { children: ReactNode }): Rea
 export function useAppointments() {
     const context = useContext(AppointmentsContext);
     if (context === undefined) {
-        throw new Error('useAppointments must be used within an AppointmentsProvider');
+        throw new Error('useAppointments deve ser usado dentro de um AppointmentsProvider');
     }
     return context;
 }
