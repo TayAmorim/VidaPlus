@@ -39,7 +39,7 @@ describe("App Routing", () => {
 
     it("should render admin dashboard on /dashboard/admin route when authenticated as admin", async () => {
         (useAuth as ReturnType<typeof vi.fn>).mockReturnValue({
-            user: { role: 'admin' },
+            user: { role: 'admin', name: "Admin User" },
             isLoading: false,
             isAuthenticated: true,
         });
@@ -54,7 +54,7 @@ describe("App Routing", () => {
 
     it("should render professional dashboard on /dashboard/professional route when authenticated as professional", async () => {
         (useAuth as ReturnType<typeof vi.fn>).mockReturnValue({
-            user: { role: 'professional' },
+            user: { role: 'professional', name: "Professional User" },
             isLoading: false,
             isAuthenticated: true,
         });
@@ -69,7 +69,7 @@ describe("App Routing", () => {
 
     it("should render patient dashboard on /dashboard/patient route when authenticated as patient", async () => {
         (useAuth as ReturnType<typeof vi.fn>).mockReturnValue({
-            user: { role: 'patient' },
+            user: { role: 'patient', name: "Patient User" },
             isLoading: false,
             isAuthenticated: true,
         });
