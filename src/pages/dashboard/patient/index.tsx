@@ -233,9 +233,9 @@ export default function PatientDashboard() {
                     </CardTitle>
                 </CardHeader>
                 <CardContent>
-                    <div className="relative w-full overflow-auto">
-                        <table className="w-full caption-bottom text-sm text-left">
-                            <thead className="[&_tr]:border-b">
+                    <div className="w-full">
+                        <table className="w-full text-sm text-left">
+                            <thead className="hidden md:table-header-group [&_tr]:border-b">
                                 <tr className="border-b transition-colors hover:bg-slate-50/50">
                                     <th className="h-12 px-4 align-middle font-medium text-slate-500">Data</th>
                                     <th className="h-12 px-4 align-middle font-medium text-slate-500">Médico</th>
@@ -243,20 +243,30 @@ export default function PatientDashboard() {
                                     <th className="h-12 px-4 align-middle font-medium text-slate-500">Status</th>
                                 </tr>
                             </thead>
-                            <tbody className="[&_tr:last-child]:border-0">
+                            <tbody className="block md:table-row-group space-y-4 md:space-y-0">
                                 {recentAppointments.length > 0 ? (
                                     recentAppointments.map((app) => (
-                                        <tr key={app.id} className="border-b transition-colors hover:bg-slate-50/50">
-                                            <td className="p-4 align-middle">{formatDate(app.date)}</td>
-                                            <td className="p-4 align-middle">{app.doctorName}</td>
-                                            <td className="p-4 align-middle max-w-[200px] truncate" title={app.description}>{app.description}</td>
-                                            <td className="p-4 align-middle">
+                                        <tr key={app.id} className="block md:table-row border rounded-lg md:border-0 md:border-b p-4 md:p-0 bg-white md:bg-transparent shadow-sm md:shadow-none transition-colors hover:bg-slate-50/50">
+                                            <td className="flex md:table-cell justify-between items-center py-2 md:py-4 px-0 md:px-4 border-b md:border-0 last:border-0 align-middle">
+                                                <span className="font-medium text-slate-700 md:hidden">Data</span>
+                                                <span>{formatDate(app.date)}</span>
+                                            </td>
+                                            <td className="flex md:table-cell justify-between items-center py-2 md:py-4 px-0 md:px-4 border-b md:border-0 last:border-0 align-middle">
+                                                <span className="font-medium text-slate-700 md:hidden">Médico</span>
+                                                <span className="text-right md:text-left">{app.doctorName}</span>
+                                            </td>
+                                            <td className="flex md:table-cell justify-between items-center py-2 md:py-4 px-0 md:px-4 border-b md:border-0 last:border-0 align-middle w-full md:max-w-[200px]" title={app.description}>
+                                                <span className="font-medium text-slate-700 md:hidden whitespace-nowrap mr-4">Motivo</span>
+                                                <span className="truncate text-right md:text-left">{app.description}</span>
+                                            </td>
+                                            <td className="flex md:table-cell justify-between items-center py-2 md:py-4 px-0 md:px-4 md:border-0 align-middle">
+                                                <span className="font-medium text-slate-700 md:hidden">Status</span>
                                                 {getStatusBadge(app.status)}
                                             </td>
                                         </tr>
                                     ))
                                 ) : (
-                                    <tr>
+                                    <tr className="block md:table-row">
                                         <td colSpan={4} className="p-4 text-center text-slate-500">
                                             Nenhuma consulta registrada.
                                         </td>
